@@ -42,7 +42,7 @@ public class Display {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-        window = glfwCreateWindow(1600, 900, "Wind Lyre Studio", NULL, NULL);
+        window = glfwCreateWindow(1600, 900, "Windsong Lyre Studio", NULL, NULL);
 
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
