@@ -2,7 +2,6 @@ package com.blackoutburst.windlyrestudio.core;
 
 import com.blackoutburst.windlyrestudio.core.devices.Mouse;
 
-
 public class Core {
 
     private static int renderPasses = 0;

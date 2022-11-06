@@ -7,8 +7,6 @@ import com.blackoutburst.windlyrestudio.core.gui.callbacks.WindowCallBack;
 import com.blackoutburst.windlyrestudio.core.listener.GlobalKeyListener;
 import com.blackoutburst.windlyrestudio.utils.IOUtils;
 import com.blackoutburst.windlyrestudio.utils.maths.Vector2i;
-import com.github.kwhat.jnativehook.GlobalScreen;
-import com.github.kwhat.jnativehook.NativeHookException;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.opengl.GL;
@@ -29,6 +27,7 @@ public class Display {
     protected static long window;
 
     public Display() {
+
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!glfwInit())
