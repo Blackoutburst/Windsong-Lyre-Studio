@@ -9,6 +9,8 @@ import static org.lwjgl.openal.ALC10.*;
 
 public class AudioPlayer {
 
+    public static float volume = 1.0f;
+
     private long audioContext;
     private long audioDevice;
 

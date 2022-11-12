@@ -1,9 +1,6 @@
 package com.blackoutburst.windlyrestudio.core.gui.render;
 
-import com.blackoutburst.windlyrestudio.core.gui.callbacks.MouseButtonCallBack;
-import com.blackoutburst.windlyrestudio.core.gui.callbacks.MousePositionCallBack;
-import com.blackoutburst.windlyrestudio.core.gui.callbacks.MouseScrollCallBack;
-import com.blackoutburst.windlyrestudio.core.gui.callbacks.WindowCallBack;
+import com.blackoutburst.windlyrestudio.core.gui.callbacks.*;
 import com.blackoutburst.windlyrestudio.core.listener.GlobalKeyListener;
 import com.blackoutburst.windlyrestudio.utils.IOUtils;
 import com.blackoutburst.windlyrestudio.utils.maths.Vector2i;
@@ -34,6 +31,10 @@ public class Display {
             throw new IllegalStateException("Unable to initialize GLFW");
     }
 
+    public static long getWindow() {
+        return window;
+    }
+
     public Display create() {
         glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -58,6 +59,7 @@ public class Display {
         glfwSetCursorPosCallback(window, new MousePositionCallBack());
         glfwSetMouseButtonCallback(window, new MouseButtonCallBack());
         glfwSetScrollCallback(window, new MouseScrollCallBack());
+        glfwSetKeyCallback(window, new KeyboardCallBack());
 
         FrameBuffer.init();
 
@@ -97,54 +99,56 @@ public class Display {
 
     private ByteBuffer loadIcons(String path, Vector2i imageSize) throws Exception {
         ByteBuffer image;
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer comp = stack.mallocInt(1);
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
+        MemoryStack.stackPush();
+        IntBuffer comp = MemoryStack.stackMallocInt(1);
+        IntBuffer w = MemoryStack.stackMallocInt(1);
+        IntBuffer h = MemoryStack.stackMallocInt(1);
 
-            image = STBImage.stbi_load_from_memory(IOUtils.ioResourceToByteBuffer(path, 1024), w, h, comp, 4);
-            imageSize.set(w.get(), h.get());
+        image = STBImage.stbi_load_from_memory(IOUtils.ioResourceToByteBuffer(path, 1024), w, h, comp, 4);
+        imageSize.set(w.get(), h.get());
 
-            ((Buffer)comp).clear();
-            ((Buffer)w).clear();
-            ((Buffer)h).clear();
-            if (image == null) {
-                throw new Exception("Failed to load icons");
-            }
-        }
+        ((Buffer)comp).clear();
+        ((Buffer)w).clear();
+        ((Buffer)h).clear();
+        if (image == null)
+            throw new Exception("Failed to load icons");
+
+        MemoryStack.stackPop();
         return image;
     }
 
     public static int getWidth() {
         int w = 0;
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer width = stack.mallocInt(1);
-            IntBuffer height = stack.mallocInt(1);
-            glfwGetWindowSize(window, width, height);
-            w = width.get();
+        MemoryStack.stackPush();
+        IntBuffer width = MemoryStack.stackMallocInt(1);
+        IntBuffer height = MemoryStack.stackMallocInt(1);
+        glfwGetWindowSize(window, width, height);
+        w = width.get();
 
-            ((Buffer)width).clear();
-            ((Buffer)height).clear();
-        } catch (Exception e) {
-            System.err.println("Error while getting display width: "+e);
-        }
+        ((Buffer)width).clear();
+        ((Buffer)height).clear();
+
+        MemoryStack.stackPop();
+
         return (w);
     }
 
     public static int getHeight() {
         int h = 0;
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer width = stack.mallocInt(1);
-            IntBuffer height = stack.mallocInt(1);
-            glfwGetWindowSize(window, width, height);
-            h = height.get();
-            ((Buffer)width).clear();
-            ((Buffer)height).clear();
-        } catch (Exception e) {
-            System.err.println("Error while getting display height: "+e);
-        }
+        MemoryStack.stackPush();
+        IntBuffer width = MemoryStack.stackMallocInt(1);
+        IntBuffer height = MemoryStack.stackMallocInt(1);
+        glfwGetWindowSize(window, width, height);
+
+        h = height.get();
+
+        ((Buffer)width).clear();
+        ((Buffer)height).clear();
+
+        MemoryStack.stackPop();
+
         return (h);
     }
 

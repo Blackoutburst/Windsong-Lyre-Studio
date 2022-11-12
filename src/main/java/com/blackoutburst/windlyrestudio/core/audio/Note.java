@@ -20,6 +20,8 @@ public class Note {
     }
 
     public void play() {
+        alSourcei(sourceId, AL_POSITION, 0);
+        alSourcef(sourceId, AL_GAIN, AudioPlayer.volume);
         alSourcePlay(sourceId);
     }
 
@@ -33,15 +35,17 @@ public class Note {
     }
 
     private void loadSound(String filePath) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer channelBuffer = stack.mallocInt(1);
-            IntBuffer sampleRateBuffer = stack.mallocInt(1);
+        try {
+            MemoryStack.stackPush();
+            IntBuffer channelBuffer = MemoryStack.stackMallocInt(1);
+            IntBuffer sampleRateBuffer = MemoryStack.stackMallocInt(1);
 
             ShortBuffer rawAudioBuffer = STBVorbis.stb_vorbis_decode_memory(IOUtils.ioResourceToByteBuffer(filePath, 1024), channelBuffer, sampleRateBuffer);
 
-            if (rawAudioBuffer == null) {
+            if (rawAudioBuffer == null)
                 throw new Exception();
-            }
+
+            MemoryStack.stackPop();
 
             int channels = channelBuffer.get();
             int sampleRate = sampleRateBuffer.get();
@@ -59,9 +63,6 @@ public class Note {
 
             sourceId = alGenSources();
             alSourcei(sourceId, AL_BUFFER, bufferId);
-            alSourcei(sourceId, AL_LOOPING, AL_FALSE);
-            alSourcei(sourceId, AL_POSITION, 0);
-            alSourcef(sourceId, AL_GAIN, 1.0f);
 
             free(rawAudioBuffer);
         } catch (Exception e) {

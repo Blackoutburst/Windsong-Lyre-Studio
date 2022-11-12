@@ -1,16 +1,10 @@
 package com.blackoutburst.windlyrestudio.core.gui.render;
 
 import com.blackoutburst.windlyrestudio.utils.maths.Matrix;
+import com.blackoutburst.windlyrestudio.utils.maths.Vector2f;
 
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_BACK;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glCullFace;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 
 
 public class FrameBuffer {
@@ -29,4 +23,15 @@ public class FrameBuffer {
         glViewport(0, 0, width, height);
         Matrix.ortho2D(projection, 0, width, 0, height, -1, 1);
     }
+
+    public static boolean outOfFrame(Vector2f position, Vector2f size) {
+        if (position.x + size.x / 2 < 0)
+            return (true);
+        if (position.x - size.x / 2 > Display.getWidth() )
+            return (true);
+        if (position.y - size.y / 2 > Display.getHeight())
+            return (true);
+        return position.y + size.y / 2 < 0;
+    }
+
 }
